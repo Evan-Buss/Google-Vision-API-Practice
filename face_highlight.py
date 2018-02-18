@@ -3,8 +3,8 @@ from PIL import Image, ImageDraw, ImageFont
 from google.cloud import vision
 from google.cloud.vision import types
 
-input = 'jake.jpg'
-output = 'highlighted_' + input
+input = 'emotions.jpeg'
+output = 'highlighted2_' + input
 
 
 def detect_face(face_file, max_results=4):
@@ -21,23 +21,34 @@ def highlight_faces(image, faces, output_filename):
 
     draw = ImageDraw.Draw(im)
 
-    likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE', 'LIKELY', 'VERY_LIKELY')
-
-    draw.text((30, 30), "Joy Levels", font=font)
-
-    for face in faces:
-        box = [(vertex.x, vertex.y) for vertex in face.bounding_poly.vertices]
-        
-        draw.line(box + [box[0]], width=5, fill="#00ff00")
-        draw.text(box[3] + (0,1000), likelihood_name[face.joy_likelihood],fill='#00ff00', font=font)
+    calculate_mood(draw, font, faces)
 
     im.save(output_filename)
+
+
+def calculate_mood(draw, font, faces):
+    """ Draws each person's mood under their face. """
+
+    for face in faces:
+        box = [(vertex.x, vertex.y)
+               for vertex in face.fd_bounding_poly.vertices]
+
+        draw.line(box + [box[0]], width=5, fill="#00ff00")
+
+        emotions = {'Joyous': face.joy_likelihood,
+                    'Angery': face.anger_likelihood,
+                    'Surprised': face.surprise_likelihood,
+                    'Sorrowful': face.sorrow_likelihood}
+        emotion = max(emotions, key=emotions.get)
+        
+        draw.text(box[3], (emotion + " " + str(emotions.get(emotion))),
+                  fill='#0D0D0D', font=font)
 
 
 def main(input_filename, output_filename, max_results):
     with open(input_filename, 'rb') as image:
         faces = detect_face(image, max_results)
-        print ('Found {} face{}'.format(
+        print('Found {} face{}'.format(
             len(faces), '' if len(faces) == 1 else 's'))
 
         print('Writing to file {}'.format(output_filename))
@@ -48,6 +59,3 @@ def main(input_filename, output_filename, max_results):
 
 if __name__ == "__main__":
     main(input, output, 0)
-
-#TODO: Calculate all moods and find the highest average
-
