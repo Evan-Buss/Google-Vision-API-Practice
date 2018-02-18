@@ -6,6 +6,11 @@ __pycache__/
 #Image Files
 *.jpg
 *.png
+*.jpeg
+
+#Editor Files
+*.idea
+*.vscode
 
 # C extensions
 *.so
