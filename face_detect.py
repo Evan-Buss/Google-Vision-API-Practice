@@ -15,7 +15,7 @@ faces = response.face_annotations
 
 # Names of likelihood from google.cloud.vision.enums
 likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE',
-                'LIKELY', 'VERY_LIKELY')
+                   'LIKELY', 'VERY_LIKELY')
 print('Faces:')
 
 for face in faces:
@@ -24,6 +24,6 @@ for face in faces:
     print('surprise: {}'.format(likelihood_name[face.surprise_likelihood]))
 
     vertices = (['({},{})'.format(vertex.x, vertex.y)
-                for vertex in face.bounding_poly.vertices])
+                 for vertex in face.bounding_poly.vertices])
 
     print('face bounds: {}'.format(','.join(vertices)))

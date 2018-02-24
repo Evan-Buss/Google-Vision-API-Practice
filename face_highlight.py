@@ -30,32 +30,34 @@ def calculate_mood(draw, font, faces):
     """ Draws each person's mood under their face. """
 
     likelihood_name = ('UNKNOWN', 'VERY_UNLIKELY', 'UNLIKELY', 'POSSIBLE',
-            'LIKELY', 'VERY_LIKELY')
+                       'LIKELY', 'VERY_LIKELY')
 
     for face in faces:
         box = [(vertex.x, vertex.y)
-                for vertex in face.fd_bounding_poly.vertices]
+               for vertex in face.fd_bounding_poly.vertices]
 
         draw.line(box + [box[0]], width=5, fill='#00ff00')
 
         emotions = {'Joyous': face.joy_likelihood,
-                'Angery': face.anger_likelihood,
-                'Surprised': face.surprise_likelihood,
-                'Sorrowful': face.sorrow_likelihood}
+                    'Angery': face.anger_likelihood,
+                    'Surprised': face.surprise_likelihood,
+                    'Sorrowful': face.sorrow_likelihood}
         emotion = max(emotions, key=emotions.get)
 
         draw.text(box[3], (emotion + " " + str(emotions.get(emotion))),
-                fill='#F2F2F2', font=font)
+                  fill='#F2F2F2', font=font)
         new_pos = (box[3][0], box[3][1]+30)
         print(new_pos)
         draw.text(new_pos, likelihood_name[emotions.get(
             emotion)], fill='#F2F2F2', font=font)
 
+
 def main(input_filename, output_filename, max_results):
     with open(input_filename, 'rb') as image:
-        
+
         faces = detect_face(image, max_results)
-        print('Found {} face{}'.format(len(faces), '' if len(faces) == 1 else 's'))
+        print('Found {} face{}'.format(
+            len(faces), '' if len(faces) == 1 else 's'))
 
         print('Writing to file {}'.format(output_filename))
 
